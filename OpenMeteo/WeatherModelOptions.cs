@@ -125,6 +125,10 @@ namespace OpenMeteo
         meteofrance_arpege_world,
         meteofrance_arpege_europe,
         meteofrance_arome_france,
-        meteofrance_arome_france_hd
+        meteofrance_arome_france_hd,
+        bom_access_global,
+        arpae_cosmo_2i, 
+        arpae_cosmo_2i_ruc, 
+        arpae_cosmo_5m
     }
 }
