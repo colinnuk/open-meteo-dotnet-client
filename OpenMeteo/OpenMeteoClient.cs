@@ -17,12 +17,25 @@ namespace OpenMeteo
         private readonly string _elevationApiUrl = "https://api.open-meteo.com/v1/elevation";
         private readonly HttpController httpController;
 
+        private readonly IOpenMeteoLogger? _logger = default!;
+        private readonly bool _rethrowExceptions = false;
+
         /// <summary>
         /// Creates a new <seealso cref="OpenMeteoClient"/> object and sets the neccessary variables (httpController, CultureInfo)
         /// </summary>
         public OpenMeteoClient()
         {
             httpController = new HttpController();
+        }
+
+        /// <summary>
+        /// Creates a new <seealso cref="OpenMeteoClient"/> object and sets the neccessary variables (httpController, CultureInfo)
+        /// </summary>
+        public OpenMeteoClient(bool rethrowExceptions, IOpenMeteoLogger? logger = null)
+        {
+            httpController = new HttpController();
+            _logger = logger;
+            _rethrowExceptions = rethrowExceptions;
         }
 
         /// <summary>
@@ -80,14 +93,7 @@ namespace OpenMeteo
         /// <returns>Awaitable Task containing WeatherForecast or NULL</returns>
         public async Task<WeatherForecast?> QueryAsync(WeatherForecastOptions options)
         {
-            try
-            {
-                return await GetWeatherForecastAsync(options);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return await GetWeatherForecastAsync(options);
         }
 
         /// <summary>
@@ -217,7 +223,9 @@ namespace OpenMeteo
         {
             try
             {
-                HttpResponseMessage response = await httpController.Client.GetAsync(MergeUrlWithOptions(_airQualityApiUrl, options));
+                var url = MergeUrlWithOptions(_airQualityApiUrl, options);
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). URL: {url}");
+                HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
                 AirQuality? airQuality = await JsonSerializer.DeserializeAsync<AirQuality>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
@@ -225,8 +233,9 @@ namespace OpenMeteo
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
+                _logger?.Error($"Error in {nameof(OpenMeteoClient)}.GetAirQualityAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                if (_rethrowExceptions)
+                    throw;
                 return null;
             }
         }
@@ -305,16 +314,23 @@ namespace OpenMeteo
         {
             try
             {
-                HttpResponseMessage response = await httpController.Client.GetAsync(MergeUrlWithOptions(_weatherApiUrl, options));
-                response.EnsureSuccessStatusCode();
+                var url = MergeUrlWithOptions(_weatherApiUrl, options);
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetElevationAsync(). URL: {url}");
+                HttpResponseMessage response = await httpController.Client.GetAsync(url);
+                if(response.IsSuccessStatusCode)
+                {
+                    WeatherForecast? weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                    return weatherForecast;
+                }
 
-                WeatherForecast? weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-                return weatherForecast;
+                var error = await JsonSerializer.DeserializeAsync<ErrorResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                throw new OpenMeteoClientException(error?.Reason ?? "Exception in OpenMeteoClient", response.StatusCode);
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
+                _logger?.Error($"Error in {nameof(OpenMeteoClient)}.GetWeatherForecastAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                if (_rethrowExceptions)
+                    throw;
                 return null;
             }
 
@@ -324,7 +340,10 @@ namespace OpenMeteo
         {
             try
             {
-                HttpResponseMessage response = await httpController.Client.GetAsync(MergeUrlWithOptions(_geocodeApiUrl, options));
+
+                var url = MergeUrlWithOptions(_geocodeApiUrl, options);
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). URL: {url}");
+                HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
                 GeocodingApiResponse? geocodingData = await JsonSerializer.DeserializeAsync<GeocodingApiResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
@@ -333,8 +352,9 @@ namespace OpenMeteo
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine("Can't find " + options.Name + ". Please make sure that the name is valid.");
-                Console.WriteLine(e.Message);
+                _logger?.Error($"Error in {nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                if (_rethrowExceptions)
+                    throw;
                 return null;
             }
         }
@@ -343,7 +363,9 @@ namespace OpenMeteo
         {
             try
             {
-                HttpResponseMessage response = await httpController.Client.GetAsync(MergeUrlWithOptions(_elevationApiUrl, options));
+                var url = MergeUrlWithOptions(_elevationApiUrl, options);
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetElevationAsync(). URL: {url}");
+                HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
                 ElevationApiResponse? elevationData = await JsonSerializer.DeserializeAsync<ElevationApiResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
@@ -352,8 +374,10 @@ namespace OpenMeteo
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine($"Can't find elevation for latitude {options.Latitude} & longitude {options.Longitude}. Please make sure that they are valid.");
-                Console.WriteLine(e.Message);
+                _logger?.Warning($"Can't find elevation for latitude {options.Latitude} & longitude {options.Longitude}. Please make sure that they are valid.");
+                _logger?.Error($"Error in {nameof(OpenMeteoClient)}.GetElevationAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                if (_rethrowExceptions)
+                    throw;
                 return null;
             }
         }

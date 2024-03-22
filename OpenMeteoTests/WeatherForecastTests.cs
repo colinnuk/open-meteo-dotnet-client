@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -124,6 +125,23 @@ namespace OpenMeteoTests
             Assert.IsTrue(WeatherModelOptions.All.Parameter.All(p => options.Models.Parameter.Contains(p)));
             Assert.IsTrue(CurrentOptions.All.Parameter.All(p => options.Current.Parameter.Contains(p)));
             Assert.IsTrue(Minutely15Options.All.Parameter.All(p => options.Minutely15.Parameter.Contains(p)));
+        }
+
+        [TestMethod]
+        public async Task Latitude_Longitude_No_Data_For_Selected_Forecast_Rethrows_Test()
+        {
+            OpenMeteoClient client = new(true);
+
+            WeatherForecastOptions options = new WeatherForecastOptions
+            {
+                Latitude = 1,
+                Longitude = 1,
+                Models = new WeatherModelOptions(WeatherModelOptionsParameter.gfs_hrrr),
+            };
+
+            var ex = await Assert.ThrowsExceptionAsync<OpenMeteoClientException>(async () => await client.QueryAsync(options));
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
+            Assert.AreEqual("No data is available for this location", ex.Message);
         }
     }
 }
