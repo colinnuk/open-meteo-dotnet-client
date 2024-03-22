@@ -51,5 +51,5 @@ jobs:
     - name: Package nuget
       run: dotnet pack ./OpenMeteo/OpenMeteo.csproj --configuration release -o:package /p:PackageVersion=${{ steps.gitversion.outputs.AssemblySemVer }}
 
-    - name: Push generated package to NuGet.org
+    - name: Push generated package to Github Packages
       run: dotnet nuget push ./package/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/colinnuk/index.json --skip-duplicate
