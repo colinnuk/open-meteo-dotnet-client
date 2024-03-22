@@ -11,6 +11,7 @@ on:
     paths:
     - '**/*.cs'
     - '**/*.csproj'
+  workflow_dispatch:
 
 env:
   DOTNET_VERSION: '6.x.x' # The .NET SDK version to use
