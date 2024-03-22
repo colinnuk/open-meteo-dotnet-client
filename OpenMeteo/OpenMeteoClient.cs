@@ -233,7 +233,7 @@ namespace OpenMeteo
             }
             catch (HttpRequestException e)
             {
-                _logger?.Error($"Error in {nameof(OpenMeteoClient)}.GetAirQualityAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                _logger?.Error($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
                 if (_rethrowExceptions)
                     throw;
                 return null;
@@ -323,12 +323,24 @@ namespace OpenMeteo
                     return weatherForecast;
                 }
 
-                var error = await JsonSerializer.DeserializeAsync<ErrorResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                ErrorResponse? error = null;
+                if((int)response.StatusCode >= 400 && (int)response.StatusCode < 500)
+                {
+                    try
+                    {
+                        error = await JsonSerializer.DeserializeAsync<ErrorResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                    }
+                    catch (Exception e)
+                    {
+                        _logger?.Error($"{nameof(OpenMeteoClient)}.GetWeatherForecastAsync(). Unable to deserialise error response. This exception will be thrown. Message: {e.Message} StackTrace: {e.StackTrace}");
+                    }
+                }                
+                
                 throw new OpenMeteoClientException(error?.Reason ?? "Exception in OpenMeteoClient", response.StatusCode);
             }
-            catch (HttpRequestException e)
+            catch (Exception e)
             {
-                _logger?.Error($"Error in {nameof(OpenMeteoClient)}.GetWeatherForecastAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                _logger?.Error($"{nameof(OpenMeteoClient)}.GetWeatherForecastAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
                 if (_rethrowExceptions)
                     throw;
                 return null;
@@ -352,7 +364,7 @@ namespace OpenMeteo
             }
             catch (HttpRequestException e)
             {
-                _logger?.Error($"Error in {nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                _logger?.Error($"{nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
                 if (_rethrowExceptions)
                     throw;
                 return null;
