@@ -110,6 +110,7 @@ namespace OpenMeteo
         gfs_seamless,
         gfs_global,
         gfs_hrrr,
+        gfs_graphcast025,
         jma_seamless,
         jma_msm,
         jma_gsm,
