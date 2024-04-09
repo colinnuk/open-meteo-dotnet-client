@@ -233,7 +233,7 @@ namespace OpenMeteo
             }
             catch (HttpRequestException e)
             {
-                _logger?.Error($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                _logger?.Warning($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
                 if (_rethrowExceptions)
                     throw;
                 return null;
@@ -340,7 +340,7 @@ namespace OpenMeteo
             }
             catch (Exception e)
             {
-                _logger?.Error($"{nameof(OpenMeteoClient)}.GetWeatherForecastAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                _logger?.Warning($"{nameof(OpenMeteoClient)}.GetWeatherForecastAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
                 if (_rethrowExceptions)
                     throw;
                 return null;
@@ -364,7 +364,7 @@ namespace OpenMeteo
             }
             catch (HttpRequestException e)
             {
-                _logger?.Error($"{nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                _logger?.Warning($"{nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
                 if (_rethrowExceptions)
                     throw;
                 return null;
@@ -387,7 +387,7 @@ namespace OpenMeteo
             catch (HttpRequestException e)
             {
                 _logger?.Warning($"Can't find elevation for latitude {options.Latitude} & longitude {options.Longitude}. Please make sure that they are valid.");
-                _logger?.Error($"Error in {nameof(OpenMeteoClient)}.GetElevationAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                _logger?.Warning($"Error in {nameof(OpenMeteoClient)}.GetElevationAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
                 if (_rethrowExceptions)
                     throw;
                 return null;
