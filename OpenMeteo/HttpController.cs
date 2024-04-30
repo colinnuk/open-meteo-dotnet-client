@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net.Http;
 
 namespace OpenMeteo
@@ -15,7 +13,12 @@ namespace OpenMeteo
 
         public HttpController()
         {
-            _httpClient = new HttpClient();
+            var socketHttpHandler = new SocketsHttpHandler()
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(4),
+            };
+            _httpClient = new HttpClient(socketHttpHandler);
+
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
