@@ -3,13 +3,7 @@ using System.Net.Http;
 
 namespace OpenMeteo
 {
-    public class OpenMeteoClientException : HttpRequestException
+    public class OpenMeteoClientException(string message, HttpStatusCode httpStatusCode) : HttpRequestException(message, null, httpStatusCode)
     {
-        public HttpStatusCode StatusCode { get; }
-
-        public OpenMeteoClientException(string message, HttpStatusCode httpStatusCode) : base(message)
-        {
-            StatusCode = httpStatusCode;
-        }
     }
 }
