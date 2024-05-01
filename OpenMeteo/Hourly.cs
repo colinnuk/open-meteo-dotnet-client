@@ -67,10 +67,21 @@ namespace OpenMeteo
         public float?[]? Temperature_950hPa { get; set; }
         public float?[]? Temperature_925hPa { get; set; }
         public float?[]? Temperature_900hPa { get; set; }
+        public float?[]? Temperature_875hPa { get; set; }
         public float?[]? Temperature_850hPa { get; set; }
+        public float?[]? Temperature_825hPa { get; set; }
         public float?[]? Temperature_800hPa { get; set; }
+        public float?[]? Temperature_775hPa { get; set; }
+        public float?[]? Temperature_750hPa { get; set; }
+        public float?[]? Temperature_725hPa { get; set; }
         public float?[]? Temperature_700hPa { get; set; }
+        public float?[]? Temperature_675hPa { get; set; }
+        public float?[]? Temperature_650hPa { get; set; }
+        public float?[]? Temperature_625hPa { get; set; }
         public float?[]? Temperature_600hPa { get; set; }
+        public float?[]? Temperature_575hPa { get; set; }
+        public float?[]? Temperature_550hPa { get; set; }
+        public float?[]? Temperature_525hPa { get; set; }
         public float?[]? Temperature_500hPa { get; set; }
         public float?[]? Temperature_400hPa { get; set; }
         public float?[]? Temperature_300hPa { get; set; }
@@ -105,10 +116,21 @@ namespace OpenMeteo
         public int?[]? Relativehumidity_950hPa { get; set; }
         public int?[]? Relativehumidity_925hPa { get; set; }
         public int?[]? Relativehumidity_900hPa { get; set; }
+        public int?[]? Relativehumidity_875hPa { get; set; }
         public int?[]? Relativehumidity_850hPa { get; set; }
+        public int?[]? Relativehumidity_825hPa { get; set; }
         public int?[]? Relativehumidity_800hPa { get; set; }
+        public int?[]? Relativehumidity_775hPa { get; set; }
+        public int?[]? Relativehumidity_750hPa { get; set; }
+        public int?[]? Relativehumidity_725hPa { get; set; }
         public int?[]? Relativehumidity_700hPa { get; set; }
+        public int?[]? Relativehumidity_675hPa { get; set; }
+        public int?[]? Relativehumidity_650hPa { get; set; }
+        public int?[]? Relativehumidity_625hPa { get; set; }
         public int?[]? Relativehumidity_600hPa { get; set; }
+        public int?[]? Relativehumidity_575hPa { get; set; }
+        public int?[]? Relativehumidity_550hPa { get; set; }
+        public int?[]? Relativehumidity_525hPa { get; set; }
         public int?[]? Relativehumidity_500hPa { get; set; }
         public int?[]? Relativehumidity_400hPa { get; set; }
         public int?[]? Relativehumidity_300hPa { get; set; }
@@ -124,10 +146,21 @@ namespace OpenMeteo
         public int?[]? Cloudcover_950hPa { get; set; }
         public int?[]? Cloudcover_925hPa { get; set; }
         public int?[]? Cloudcover_900hPa { get; set; }
+        public int?[]? Cloudcover_875hPa { get; set; }
         public int?[]? Cloudcover_850hPa { get; set; }
+        public int?[]? Cloudcover_825hPa { get; set; }
         public int?[]? Cloudcover_800hPa { get; set; }
+        public int?[]? Cloudcover_775hPa { get; set; }
+        public int?[]? Cloudcover_750hPa { get; set; }
+        public int?[]? Cloudcover_725hPa { get; set; }
         public int?[]? Cloudcover_700hPa { get; set; }
+        public int?[]? Cloudcover_675hPa { get; set; }
+        public int?[]? Cloudcover_650hPa { get; set; }
+        public int?[]? Cloudcover_625hPa { get; set; }
         public int?[]? Cloudcover_600hPa { get; set; }
+        public int?[]? Cloudcover_575hPa { get; set; }
+        public int?[]? Cloudcover_550hPa { get; set; }
+        public int?[]? Cloudcover_525hPa { get; set; }
         public int?[]? Cloudcover_500hPa { get; set; }
         public int?[]? Cloudcover_400hPa { get; set; }
         public int?[]? Cloudcover_300hPa { get; set; }
@@ -181,10 +214,21 @@ namespace OpenMeteo
         public float?[]? Geopotential_height_950hPa { get; set; }
         public float?[]? Geopotential_height_925hPa { get; set; }
         public float?[]? Geopotential_height_900hPa { get; set; }
+        public float?[]? Geopotential_height_875hPa { get; set; }
         public float?[]? Geopotential_height_850hPa { get; set; }
+        public float?[]? Geopotential_height_825hPa { get; set; }
         public float?[]? Geopotential_height_800hPa { get; set; }
+        public float?[]? Geopotential_height_775hPa { get; set; }
+        public float?[]? Geopotential_height_750hPa { get; set; }
+        public float?[]? Geopotential_height_725hPa { get; set; }
         public float?[]? Geopotential_height_700hPa { get; set; }
+        public float?[]? Geopotential_height_675hPa { get; set; }
+        public float?[]? Geopotential_height_650hPa { get; set; }
+        public float?[]? Geopotential_height_625hPa { get; set; }
         public float?[]? Geopotential_height_600hPa { get; set; }
+        public float?[]? Geopotential_height_575hPa { get; set; }
+        public float?[]? Geopotential_height_550hPa { get; set; }
+        public float?[]? Geopotential_height_525hPa { get; set; }
         public float?[]? Geopotential_height_500hPa { get; set; }
         public float?[]? Geopotential_height_400hPa { get; set; }
         public float?[]? Geopotential_height_300hPa { get; set; }
