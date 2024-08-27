@@ -132,6 +132,6 @@ namespace OpenMeteo
         arpae_cosmo_2i_ruc, 
         arpae_cosmo_5m,
         ukmo_global_deterministic_10km,
-        ukmo_global_deterministic_2km,
+        ukmo_uk_deterministic_2km,
     }
 }
