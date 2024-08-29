@@ -18,7 +18,13 @@ namespace OpenMeteo
         private readonly HttpController httpController;
 
         private readonly IOpenMeteoLogger? _logger = default!;
-        private readonly bool _rethrowExceptions = false;
+        private readonly string _apiKey = string.Empty;
+
+        /// <summary>
+        /// If set to true, exceptions from the OpenMeteo API will be rethrown. Default is false.
+        /// </summary>
+        /// <param name="rethrowExceptions"></param>
+        public bool RethrowExceptions { get; set; } = false;
 
         /// <summary>
         /// Creates a new <seealso cref="OpenMeteoClient"/> object and sets the neccessary variables (httpController, CultureInfo)
@@ -29,13 +35,36 @@ namespace OpenMeteo
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="OpenMeteoClient"/> object and sets the neccessary variables (httpController, CultureInfo)
+        /// Creates a new <seealso cref="OpenMeteoClient"/> object with a logger
         /// </summary>
-        public OpenMeteoClient(bool rethrowExceptions, IOpenMeteoLogger? logger = null)
+        /// <param name="logger">An object which implements an interface that can be used for logging from this class</param>
+        public OpenMeteoClient(IOpenMeteoLogger logger)
         {
             httpController = new HttpController();
             _logger = logger;
-            _rethrowExceptions = rethrowExceptions;
+        }
+
+        /// <summary>
+        /// Creates a new <seealso cref="OpenMeteoClient"/> object with a logger and an API key
+        /// </summary>
+        /// <param name="apiKey">The API key to use the customer OpenMeteo URLs such as https://customer-api.open-meteo.com</param>
+        public OpenMeteoClient(string apiKey)
+        {
+            httpController = new HttpController();
+            _apiKey = apiKey;
+        }
+
+        /// <summary>
+        /// Creates a new <seealso cref="OpenMeteoClient"/> object with a logger and an API key
+        /// </summary>
+        /// <param name="logger">An object which implements an interface that can be used for logging from this class</param>
+        /// <param name="apiKey">The API key to use the customer OpenMeteo URLs such as https://customer-api.open-meteo.com</param>
+
+        public OpenMeteoClient(IOpenMeteoLogger logger, string apiKey)
+        {
+            httpController = new HttpController();
+            _logger = logger;
+            _apiKey = apiKey;
         }
 
         /// <summary>
@@ -45,7 +74,7 @@ namespace OpenMeteo
         /// <returns>If successful returns an awaitable Task containing WeatherForecast or NULL if request failed</returns>
         public async Task<WeatherForecast?> QueryAsync(string location)
         {
-            GeocodingOptions geocodingOptions = new GeocodingOptions(location);
+            GeocodingOptions geocodingOptions = new(location);
 
             // Get location Information
             GeocodingApiResponse? response = await GetGeocodingDataAsync(geocodingOptions);
@@ -234,7 +263,7 @@ namespace OpenMeteo
             catch (HttpRequestException e)
             {
                 _logger?.Warning($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
-                if (_rethrowExceptions)
+                if (RethrowExceptions)
                     throw;
                 return null;
             }
@@ -341,7 +370,7 @@ namespace OpenMeteo
             catch (Exception e)
             {
                 _logger?.Warning($"{nameof(OpenMeteoClient)}.GetWeatherForecastAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
-                if (_rethrowExceptions)
+                if (RethrowExceptions)
                     throw;
                 return null;
             }
@@ -365,7 +394,7 @@ namespace OpenMeteo
             catch (HttpRequestException e)
             {
                 _logger?.Warning($"{nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
-                if (_rethrowExceptions)
+                if (RethrowExceptions)
                     throw;
                 return null;
             }
@@ -388,7 +417,7 @@ namespace OpenMeteo
             {
                 _logger?.Warning($"Can't find elevation for latitude {options.Latitude} & longitude {options.Longitude}. Please make sure that they are valid.");
                 _logger?.Warning($"Error in {nameof(OpenMeteoClient)}.GetElevationAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
-                if (_rethrowExceptions)
+                if (RethrowExceptions)
                     throw;
                 return null;
             }

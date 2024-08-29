@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -130,9 +129,12 @@ namespace OpenMeteoTests
         [TestMethod]
         public async Task Latitude_Longitude_No_Data_For_Selected_Forecast_Rethrows_Test()
         {
-            OpenMeteoClient client = new(true);
+            OpenMeteoClient client = new()
+            {
+                RethrowExceptions = true
+            };
 
-            WeatherForecastOptions options = new WeatherForecastOptions
+            WeatherForecastOptions options = new()
             {
                 Latitude = 1,
                 Longitude = 1,
