@@ -1,6 +1,6 @@
 ﻿namespace OpenMeteo
 {
-    internal class ElevationOptions
+    public class ElevationOptions
     {
         public ElevationOptions(float latitude, float longitude)
         {
