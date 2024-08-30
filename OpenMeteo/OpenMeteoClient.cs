@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Text.Json;
-using System.Globalization;
 
 namespace OpenMeteo
 {
@@ -11,14 +10,15 @@ namespace OpenMeteo
     /// </summary>
     public class OpenMeteoClient
     {
-        private readonly string _weatherApiUrl = "https://api.open-meteo.com/v1/forecast";
-        private readonly string _geocodeApiUrl = "https://geocoding-api.open-meteo.com/v1/search";
-        private readonly string _airQualityApiUrl = "https://air-quality-api.open-meteo.com/v1/air-quality";
-        private readonly string _elevationApiUrl = "https://api.open-meteo.com/v1/elevation";
         private readonly HttpController httpController;
-
+        private readonly UrlFactory _urlFactory = new();
         private readonly IOpenMeteoLogger? _logger = default!;
-        private readonly bool _rethrowExceptions = false;
+
+        /// <summary>
+        /// If set to true, exceptions from the OpenMeteo API will be rethrown. Default is false.
+        /// </summary>
+        /// <param name="rethrowExceptions"></param>
+        public bool RethrowExceptions { get; set; } = false;
 
         /// <summary>
         /// Creates a new <seealso cref="OpenMeteoClient"/> object and sets the neccessary variables (httpController, CultureInfo)
@@ -29,13 +29,36 @@ namespace OpenMeteo
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="OpenMeteoClient"/> object and sets the neccessary variables (httpController, CultureInfo)
+        /// Creates a new <seealso cref="OpenMeteoClient"/> object with a logger
         /// </summary>
-        public OpenMeteoClient(bool rethrowExceptions, IOpenMeteoLogger? logger = null)
+        /// <param name="logger">An object which implements an interface that can be used for logging from this class</param>
+        public OpenMeteoClient(IOpenMeteoLogger logger)
         {
             httpController = new HttpController();
             _logger = logger;
-            _rethrowExceptions = rethrowExceptions;
+        }
+
+        /// <summary>
+        /// Creates a new <seealso cref="OpenMeteoClient"/> object with a logger and an API key
+        /// </summary>
+        /// <param name="apiKey">The API key to use the customer OpenMeteo URLs such as https://customer-api.open-meteo.com</param>
+        public OpenMeteoClient(string apiKey)
+        {
+            httpController = new HttpController();
+            _urlFactory = new UrlFactory(apiKey);
+        }
+
+        /// <summary>
+        /// Creates a new <seealso cref="OpenMeteoClient"/> object with a logger and an API key
+        /// </summary>
+        /// <param name="logger">An object which implements an interface that can be used for logging from this class</param>
+        /// <param name="apiKey">The API key to use the customer OpenMeteo URLs such as https://customer-api.open-meteo.com</param>
+
+        public OpenMeteoClient(IOpenMeteoLogger logger, string apiKey)
+        {
+            httpController = new HttpController();
+            _logger = logger;
+            _urlFactory = new UrlFactory(apiKey);
         }
 
         /// <summary>
@@ -45,7 +68,7 @@ namespace OpenMeteo
         /// <returns>If successful returns an awaitable Task containing WeatherForecast or NULL if request failed</returns>
         public async Task<WeatherForecast?> QueryAsync(string location)
         {
-            GeocodingOptions geocodingOptions = new GeocodingOptions(location);
+            GeocodingOptions geocodingOptions = new(location);
 
             // Get location Information
             GeocodingApiResponse? response = await GetGeocodingDataAsync(geocodingOptions);
@@ -223,7 +246,7 @@ namespace OpenMeteo
         {
             try
             {
-                var url = MergeUrlWithOptions(_airQualityApiUrl, options);
+                var url = _urlFactory.GetUrlWithOptions(options);
                 _logger?.Debug($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). URL: {url}");
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -234,87 +257,16 @@ namespace OpenMeteo
             catch (HttpRequestException e)
             {
                 _logger?.Warning($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
-                if (_rethrowExceptions)
+                if (RethrowExceptions)
                     throw;
                 return null;
             }
         }
-
-        /// <summary>
-        /// Converts a given weathercode to it's string representation
-        /// </summary>
-        /// <param name="weathercode"></param>
-        /// <returns><see cref="string"/> Weathercode string representation</returns>
-        public string WeathercodeToString(int weathercode)
-        {
-            switch (weathercode)
-            {
-                case 0:
-                    return "Clear sky";
-                case 1:
-                    return "Mainly clear";
-                case 2:
-                    return "Partly cloudy";
-                case 3:
-                    return "Overcast";
-                case 45:
-                    return "Fog";
-                case 48:
-                    return "Depositing rime Fog";
-                case 51:
-                    return "Light drizzle";
-                case 53:
-                    return "Moderate drizzle";
-                case 55:
-                    return "Dense drizzle";
-                case 56:
-                    return "Light freezing drizzle";
-                case 57:
-                    return "Dense freezing drizzle";
-                case 61:
-                    return "Slight rain";
-                case 63:
-                    return "Moderate rain";
-                case 65:
-                    return "Heavy rain";
-                case 66:
-                    return "Light freezing rain";
-                case 67:
-                    return "Heavy freezing rain";
-                case 71:
-                    return "Slight snow fall";
-                case 73:
-                    return "Moderate snow fall";
-                case 75:
-                    return "Heavy snow fall";
-                case 77:
-                    return "Snow grains";
-                case 80:
-                    return "Slight rain showers";
-                case 81:
-                    return "Moderate rain showers";
-                case 82:
-                    return "Violent rain showers";
-                case 85:
-                    return "Slight snow showers";
-                case 86:
-                    return "Heavy snow showers";
-                case 95:
-                    return "Thunderstorm";
-                case 96:
-                    return "Thunderstorm with light hail";
-                case 99:
-                    return "Thunderstorm with heavy hail";
-                default:
-                    return "Invalid weathercode";
-            }
-        }
-
         private async Task<WeatherForecast?> GetWeatherForecastAsync(WeatherForecastOptions options)
         {
             try
             {
-                var url = MergeUrlWithOptions(_weatherApiUrl, options);
+                var url = _urlFactory.GetUrlWithOptions(options);
                 _logger?.Debug($"{nameof(OpenMeteoClient)}.GetElevationAsync(). URL: {url}");
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 if(response.IsSuccessStatusCode)
@@ -341,7 +293,7 @@ namespace OpenMeteo
             catch (Exception e)
             {
                 _logger?.Warning($"{nameof(OpenMeteoClient)}.GetWeatherForecastAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
-                if (_rethrowExceptions)
+                if (RethrowExceptions)
                     throw;
                 return null;
             }
@@ -353,7 +305,7 @@ namespace OpenMeteo
             try
             {
 
-                var url = MergeUrlWithOptions(_geocodeApiUrl, options);
+                var url = _urlFactory.GetUrlWithOptions(options);
                 _logger?.Debug($"{nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). URL: {url}");
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -365,7 +317,7 @@ namespace OpenMeteo
             catch (HttpRequestException e)
             {
                 _logger?.Warning($"{nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
-                if (_rethrowExceptions)
+                if (RethrowExceptions)
                     throw;
                 return null;
             }
@@ -375,7 +327,7 @@ namespace OpenMeteo
         {
             try
             {
-                var url = MergeUrlWithOptions(_elevationApiUrl, options);
+                var url = _urlFactory.GetUrlWithOptions(options);
                 _logger?.Debug($"{nameof(OpenMeteoClient)}.GetElevationAsync(). URL: {url}");
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -388,266 +340,10 @@ namespace OpenMeteo
             {
                 _logger?.Warning($"Can't find elevation for latitude {options.Latitude} & longitude {options.Longitude}. Please make sure that they are valid.");
                 _logger?.Warning($"Error in {nameof(OpenMeteoClient)}.GetElevationAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
-                if (_rethrowExceptions)
+                if (RethrowExceptions)
                     throw;
                 return null;
             }
-        }
-
-        private string MergeUrlWithOptions(string url, WeatherForecastOptions? options)
-        {
-            if (options == null) return url;
-
-            UriBuilder uri = new UriBuilder(url);
-            bool isFirstParam = false;
-
-            // If no query given, add '?' to start the query string
-            if (uri.Query == string.Empty)
-            {
-                uri.Query = "?";
-
-                // isFirstParam becomes true because the query string is new
-                isFirstParam = true;
-            }
-
-            // Add the properties
-            
-            // Begin with Latitude and Longitude since they're required
-            if (isFirstParam)
-                uri.Query += "latitude=" +  options.Latitude.ToString(CultureInfo.InvariantCulture);
-            else
-                uri.Query += "&latitude=" + options.Latitude.ToString(CultureInfo.InvariantCulture);
-
-            uri.Query += "&longitude=" + options.Longitude.ToString(CultureInfo.InvariantCulture);
-
-            uri.Query += "&temperature_unit=" + options.Temperature_Unit.ToString();
-            uri.Query += "&windspeed_unit=" + options.Windspeed_Unit.ToString();
-            uri.Query += "&precipitation_unit=" + options.Precipitation_Unit.ToString();
-            if (options.Timezone != string.Empty)
-                uri.Query += "&timezone=" + options.Timezone;
-
-            uri.Query += "&timeformat=" + options.Timeformat.ToString();
-
-            uri.Query += "&past_days=" + options.Past_Days;
-
-            if (options.Start_date != string.Empty)
-                uri.Query += "&start_date=" + options.Start_date;
-            if (options.End_date != string.Empty)
-                uri.Query += "&end_date=" + options.End_date;
-
-            // Now we iterate through hourly and daily
-
-            // Hourly
-            if (options.Hourly.Count > 0)
-            {
-                bool firstHourlyElement = true;
-                uri.Query += "&hourly=";
-
-                foreach (var option in options.Hourly)
-                {
-                    if (firstHourlyElement)
-                    {
-                        uri.Query += option.ToString();
-                        firstHourlyElement = false;
-                    }
-                    else
-                    {
-                        uri.Query += "," + option.ToString();
-                    }
-                }
-            }
-
-            // Daily
-            if (options.Daily.Count > 0)
-            {
-                bool firstDailyElement = true;
-                uri.Query += "&daily=";
-                foreach (var option in options.Daily)
-                {
-                    if (firstDailyElement)
-                    {
-                        uri.Query += option.ToString();
-                        firstDailyElement = false;
-                    }
-                    else
-                    {
-                        uri.Query += "," + option.ToString();
-                    }
-                }
-            }
-
-            // 0.2.0 Weather models
-            // cell_selection
-            uri.Query += "&cell_selection=" + options.Cell_Selection;
-
-            // Models
-            if (options.Models.Count > 0)
-            {
-                bool firstModelsElement = true;
-                uri.Query += "&models=";
-                foreach (var option in options.Models)
-                {
-                    if (firstModelsElement)
-                    {
-                        uri.Query += option.ToString();
-                        firstModelsElement = false;
-                    }
-                    else
-                    {
-                        uri.Query += "," + option.ToString();
-                    }
-                }
-            }
-
-            // new current parameter
-            if (options.Current.Count > 0)
-            {
-                bool firstCurrentElement = true;
-                uri.Query += "&current=";
-                foreach (var option in options.Current)
-                {
-                    if (firstCurrentElement)
-                    {
-                        uri.Query += option.ToString();
-                        firstCurrentElement = false;
-                    }
-                    else
-                    {
-                        uri.Query += "," + option.ToString();
-                    }
-                }
-            }
-
-            // new minutely_15 parameter
-            if (options.Minutely15.Count > 0)
-            {
-                bool firstMinutelyElement = true;
-                uri.Query += "&minutely_15=";
-                foreach (var option in options.Minutely15)
-                {
-                    if (firstMinutelyElement)
-                    {
-                        uri.Query += option.ToString();
-                        firstMinutelyElement = false;
-                    }
-                    else
-                    {
-                        uri.Query += "," + option.ToString();
-                    }
-                }
-            }
-
-            return uri.ToString();
-        }
-
-        /// <summary>
-        /// Combines a given url with an options object to create a url for GET requests
-        /// </summary>
-        /// <returns>url+queryString</returns>
-        private string MergeUrlWithOptions(string url, GeocodingOptions options)
-        {
-            if (options == null) return url;
-
-            UriBuilder uri = new UriBuilder(url);
-            bool isFirstParam = false;
-
-            // If no query given, add '?' to start the query string
-            if (uri.Query == string.Empty)
-            {
-                uri.Query = "?";
-
-                // isFirstParam becomes true because the query string is new
-                isFirstParam = true;
-            }
-
-            // Now we check every property and set the value, if neccessary
-            if (isFirstParam)
-                uri.Query += "name=" + options.Name;
-            else
-                uri.Query += "&name=" + options.Name;
-
-            if(options.Count >0)
-                uri.Query += "&count=" + options.Count;
-            
-            if (options.Format != string.Empty)
-                uri.Query += "&format=" + options.Format;
-
-            if (options.Language != string.Empty)
-                uri.Query += "&language=" + options.Language;
-
-            return uri.ToString();
-        }
-
-        /// <summary>
-        /// Combines a given url with an options object to create a url for GET requests
-        /// </summary>
-        /// <returns>url+queryString</returns>
-        private string MergeUrlWithOptions(string url, AirQualityOptions options)
-        {
-            if (options == null) return url;
-
-            UriBuilder uri = new UriBuilder(url);
-            bool isFirstParam = false;
-
-            // If no query given, add '?' to start the query string
-            if (uri.Query == string.Empty)
-            {
-                uri.Query = "?";
-
-                // isFirstParam becomes true because the query string is new
-                isFirstParam = true;
-            }
-
-            // Now we check every property and set the value, if neccessary
-            if (isFirstParam)
-                uri.Query += "latitude=" + options.Latitude.ToString(CultureInfo.InvariantCulture);
-            else
-                uri.Query += "&latitude=" + options.Latitude.ToString(CultureInfo.InvariantCulture);
-
-            uri.Query += "&longitude=" + options.Longitude.ToString(CultureInfo.InvariantCulture);
-
-            if (options.Domains != string.Empty)
-                uri.Query += "&domains=" + options.Domains;
-
-            if (options.Timeformat != string.Empty)
-                uri.Query += "&timeformat=" + options.Timeformat;
-
-            if (options.Timezone != string.Empty)
-                uri.Query += "&timezone=" + options.Timezone;
-
-            // Finally add hourly array
-            if (options.Hourly.Count >= 0)
-            {
-                bool firstHourlyElement = true;
-                uri.Query += "&hourly=";
-
-                foreach (var option in options.Hourly)
-                {
-                    if (firstHourlyElement)
-                    {
-                        uri.Query += option.ToString();
-                        firstHourlyElement = false;
-                    }
-                    else
-                    {
-                        uri.Query += "," + option.ToString();
-                    }
-                }
-            }
-
-            return uri.ToString();
-        }
-
-        private string MergeUrlWithOptions(string url, ElevationOptions options)
-        {
-            if (options == null) return url;
-
-            UriBuilder uri = new UriBuilder(url)
-            {
-                Query = $"?latitude={options.Latitude.ToString(CultureInfo.InvariantCulture)}&longitude={options.Longitude.ToString(CultureInfo.InvariantCulture)}"
-            };
-
-            return uri.ToString();
         }
     }
 }
