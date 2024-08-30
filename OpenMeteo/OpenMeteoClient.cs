@@ -58,8 +58,10 @@ namespace OpenMeteo
         {
             httpController = new HttpController();
             _logger = logger;
-            _logger?.Information($"{nameof(OpenMeteoClient)} Initialised with API Key starting with: {apiKey.Substring(0, 2)}");
             _urlFactory = new UrlFactory(apiKey);
+
+            if (!string.IsNullOrEmpty(apiKey))
+                _logger?.Information($"{nameof(OpenMeteoClient)} Initialised with API key starting with: {apiKey[..2]}");
         }
 
         /// <summary>
