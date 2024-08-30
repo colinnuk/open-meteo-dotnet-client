@@ -21,6 +21,11 @@ public class UrlFactory
         _apiKey = apiKey;
     }
 
+    public string SanitiseUrl(string url)
+    {
+        return string.IsNullOrEmpty(_apiKey) ? url : url.Replace(_apiKey, "APIKEY");
+    }
+
     public string GetUrlWithOptions(WeatherForecastOptions options)
     {
         UriBuilder uri = new(GetBaseUrl(_weatherApiUrl));

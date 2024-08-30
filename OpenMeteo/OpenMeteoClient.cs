@@ -127,7 +127,7 @@ namespace OpenMeteo
         /// <returns>Awaitable Task containing WeatherForecast or NULL</returns>
         public async Task<WeatherForecast?> QueryAsync(float latitude, float longitude)
         {
-            WeatherForecastOptions options = new WeatherForecastOptions
+            WeatherForecastOptions options = new()
             {
                 Latitude = latitude,
                 Longitude = longitude,
@@ -171,7 +171,7 @@ namespace OpenMeteo
         /// <returns></returns>
         public async Task<GeocodingApiResponse?> GetLocationDataAsync(string location)
         {
-            GeocodingOptions geocodingOptions = new GeocodingOptions(location);
+            GeocodingOptions geocodingOptions = new(location);
 
             return await GetLocationDataAsync(geocodingOptions);
         }
@@ -247,7 +247,7 @@ namespace OpenMeteo
             try
             {
                 var url = _urlFactory.GetUrlWithOptions(options);
-                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). URL: {url}");
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). URL: {_urlFactory.SanitiseUrl(url)}");
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
@@ -267,7 +267,7 @@ namespace OpenMeteo
             try
             {
                 var url = _urlFactory.GetUrlWithOptions(options);
-                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetElevationAsync(). URL: {url}");
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetElevationAsync(). URL: {_urlFactory.SanitiseUrl(url)}");
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 if(response.IsSuccessStatusCode)
                 {
@@ -306,7 +306,7 @@ namespace OpenMeteo
             {
 
                 var url = _urlFactory.GetUrlWithOptions(options);
-                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). URL: {url}");
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetGeocodingDataAsync(). URL: {_urlFactory.SanitiseUrl(url)}");
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
@@ -328,7 +328,7 @@ namespace OpenMeteo
             try
             {
                 var url = _urlFactory.GetUrlWithOptions(options);
-                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetElevationAsync(). URL: {url}");
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetElevationAsync(). URL: {_urlFactory.SanitiseUrl(url)}");
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
