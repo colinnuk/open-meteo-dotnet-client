@@ -86,6 +86,30 @@ namespace OpenMeteoTests
             Assert.AreEqual(expectedUrl, url);
         }
 
+        [TestMethod]
+        public void SanitiseUrl_WithApiKey_Test()
+        {
+            var factory = new UrlFactory("testApiKey");
+            var url = "https://api.open-meteo.com/v1/forecast?apikey=testApiKey";
+            var sanitisedUrl = factory.SanitiseUrl(url);
+
+            var expectedUrl = "https://api.open-meteo.com/v1/forecast?apikey=APIKEY";
+            Assert.AreEqual(expectedUrl, sanitisedUrl);
+        }
+
+        [TestMethod]
+        public void SanitiseUrl_WithNoApiKey_Test()
+        {
+            var factory = new UrlFactory();
+            var url = "https://api.open-meteo.com/v1/forecast";
+            var sanitisedUrl = factory.SanitiseUrl(url);
+
+            var expectedUrl = "https://api.open-meteo.com/v1/forecast";
+            Assert.AreEqual(expectedUrl, sanitisedUrl);
+        }
+
+
+
         private static WeatherForecastOptions GetWeatherForecastOptions() => new()
         {
             Latitude = 40.7128f,
