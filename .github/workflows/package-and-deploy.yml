@@ -1,6 +1,7 @@
 name: Package, Deploy and create new release
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master ]
     paths:
