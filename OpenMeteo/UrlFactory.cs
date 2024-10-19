@@ -8,6 +8,7 @@ public class UrlFactory
     private readonly string _geocodeApiUrl = "geocoding-api.open-meteo.com/v1/search";
     private readonly string _airQualityApiUrl = "air-quality-api.open-meteo.com/v1/air-quality";
     private readonly string _elevationApiUrl = "api.open-meteo.com/v1/elevation";
+    private readonly string _metadataFileFragment = "/static/meta.json";
     private readonly string _customerApiUrlFragment = "customer-";
 
     private readonly string _apiKey = string.Empty;
@@ -234,6 +235,12 @@ public class UrlFactory
 
         SetApiKeyIfNeeded(uri);
         return uri.ToString();
+    }
+
+    public string GetWeatherForecastMetadataUrl(WeatherModelOptionsParameter weatherModel)
+    {
+        var metadataBaseUrl = $"api.open-meteo.com/data/{MetadataNameHelper.GetPrefixForWeatherModel(weatherModel)}{_metadataFileFragment}";
+        return GetBaseUrl(metadataBaseUrl);
     }
 
     private void SetApiKeyIfNeeded(UriBuilder uri)

@@ -13,6 +13,7 @@ namespace OpenMeteo
         private readonly HttpController httpController;
         private readonly UrlFactory _urlFactory = new();
         private readonly IOpenMeteoLogger? _logger = default!;
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new() { PropertyNameCaseInsensitive = true };
 
         /// <summary>
         /// If set to true, exceptions from the OpenMeteo API will be rethrown. Default is false.
@@ -78,7 +79,7 @@ namespace OpenMeteo
             if (response == null || response.Locations == null)
                 return null;
 
-            WeatherForecastOptions options = new WeatherForecastOptions
+            WeatherForecastOptions options = new()
             {
                 Latitude = response.Locations[0].Latitude,
                 Longitude = response.Locations[0].Longitude,
@@ -101,7 +102,7 @@ namespace OpenMeteo
             if (response == null || response?.Locations == null)
                 return null;
 
-            WeatherForecastOptions weatherForecastOptions = new WeatherForecastOptions
+            WeatherForecastOptions weatherForecastOptions = new()
             {
                 Latitude = response.Locations[0].Latitude,
                 Longitude = response.Locations[0].Longitude,
@@ -245,6 +246,33 @@ namespace OpenMeteo
             return QueryElevationAsync(latitude, longitude).GetAwaiter().GetResult();
         }
 
+        public async Task<MetadataModel> QueryWeatherForecastMetadata(WeatherModelOptionsParameter weatherModel)
+        {
+            try
+            {
+                var url = _urlFactory.GetWeatherForecastMetadataUrl(weatherModel);
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetWeatherForecastMetadata(). URL: {_urlFactory.SanitiseUrl(url)}");
+                HttpResponseMessage response = await httpController.Client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                MetadataApiModel? meta = await JsonSerializer.DeserializeAsync<MetadataApiModel>(await response.Content.ReadAsStreamAsync(), _jsonSerializerOptions);
+                return ConvertMetadataModel(meta ?? throw new OpenMeteoClientException("No metadata found", response.StatusCode));
+            }
+            catch (HttpRequestException e)
+            {
+                _logger?.Warning($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                throw;
+            }
+        }
+
+        private static MetadataModel ConvertMetadataModel(MetadataApiModel apiModel) => new(
+            DateTimeOffset.FromUnixTimeSeconds(apiModel.data_end_time).UtcDateTime,
+            DateTimeOffset.FromUnixTimeSeconds(apiModel.last_run_availability_time).UtcDateTime,
+            DateTimeOffset.FromUnixTimeSeconds(apiModel.last_run_initialisation_time).UtcDateTime,
+            DateTimeOffset.FromUnixTimeSeconds(apiModel.last_run_modification_time).UtcDateTime,
+            apiModel.temporal_resolution_seconds,
+            apiModel.update_interval_seconds);
+
         private async Task<AirQuality?> GetAirQualityAsync(AirQualityOptions options)
         {
             try
@@ -254,7 +282,7 @@ namespace OpenMeteo
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
-                AirQuality? airQuality = await JsonSerializer.DeserializeAsync<AirQuality>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                AirQuality? airQuality = await JsonSerializer.DeserializeAsync<AirQuality>(await response.Content.ReadAsStreamAsync(), _jsonSerializerOptions);
                 return airQuality;
             }
             catch (HttpRequestException e)
@@ -265,6 +293,7 @@ namespace OpenMeteo
                 return null;
             }
         }
+
         private async Task<WeatherForecast?> GetWeatherForecastAsync(WeatherForecastOptions options)
         {
             try
@@ -274,7 +303,7 @@ namespace OpenMeteo
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 if(response.IsSuccessStatusCode)
                 {
-                    WeatherForecast? weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                    WeatherForecast? weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), _jsonSerializerOptions);
                     return weatherForecast;
                 }
 
@@ -283,7 +312,7 @@ namespace OpenMeteo
                 {
                     try
                     {
-                        error = await JsonSerializer.DeserializeAsync<ErrorResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                        error = await JsonSerializer.DeserializeAsync<ErrorResponse>(await response.Content.ReadAsStreamAsync(), _jsonSerializerOptions);
                     }
                     catch (Exception e)
                     {
@@ -313,7 +342,7 @@ namespace OpenMeteo
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
-                GeocodingApiResponse? geocodingData = await JsonSerializer.DeserializeAsync<GeocodingApiResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                GeocodingApiResponse? geocodingData = await JsonSerializer.DeserializeAsync<GeocodingApiResponse>(await response.Content.ReadAsStreamAsync(), _jsonSerializerOptions);
 
                 return geocodingData;
             }
@@ -335,7 +364,7 @@ namespace OpenMeteo
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
-                ElevationApiResponse? elevationData = await JsonSerializer.DeserializeAsync<ElevationApiResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                ElevationApiResponse? elevationData = await JsonSerializer.DeserializeAsync<ElevationApiResponse>(await response.Content.ReadAsStreamAsync(), _jsonSerializerOptions);
 
                 return elevationData;
             }

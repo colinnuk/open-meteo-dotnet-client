@@ -108,7 +108,60 @@ namespace OpenMeteoTests
             Assert.AreEqual(expectedUrl, sanitisedUrl);
         }
 
+        [DataTestMethod]
+        [DataRow(WeatherModelOptionsParameter.ecmwf_ifs025, "ecmwf_ifs025")]
+        [DataRow(WeatherModelOptionsParameter.ecmwf_aifs025, "ecmwf_aifs025")]
+        [DataRow(WeatherModelOptionsParameter.icon_global, "dwd_icon")]
+        [DataRow(WeatherModelOptionsParameter.icon_eu, "dwd_icon_eu")]
+        [DataRow(WeatherModelOptionsParameter.icon_d2, "dwd_icon_d2")]
+        [DataRow(WeatherModelOptionsParameter.meteofrance_arpege_world, "meteofrance_arpege_world025")]
+        [DataRow(WeatherModelOptionsParameter.meteofrance_arpege_europe, "meteofrance_arpege_europe")]
+        [DataRow(WeatherModelOptionsParameter.meteofrance_arome_france, "meteofrance_arome_france0025")]
+        [DataRow(WeatherModelOptionsParameter.ukmo_uk_deterministic_2km, "ukmo_uk_deterministic_2km")]
+        [DataRow(WeatherModelOptionsParameter.ukmo_global_deterministic_10km, "ukmo_global_deterministic_10km")]
+        [DataRow(WeatherModelOptionsParameter.gfs_global, "ncep_gfs013")]
+        [DataRow(WeatherModelOptionsParameter.gfs_graphcast025, "ncep_gfs_graphcast025")]
+        [DataRow(WeatherModelOptionsParameter.gfs_hrrr, "ncep_hrrr_conus")]
+        [DataRow(WeatherModelOptionsParameter.gem_global, "cmc_gem_gdps")]
+        [DataRow(WeatherModelOptionsParameter.gem_hrdps_continental, "cmc_gem_hrdps")]
+        [DataRow(WeatherModelOptionsParameter.gem_regional, "cmc_gem_rdps")]
+        [DataRow(WeatherModelOptionsParameter.jma_gsm, "jma_gsm")]
+        public void GetWeatherForecastMetadataUrl_WithNoApiKey_Test(WeatherModelOptionsParameter weatherModel, string expectedName)
+        {
+            var factory = new UrlFactory();
+            var url = factory.GetWeatherForecastMetadataUrl(weatherModel);
 
+            var expectedUrl = $"https://api.open-meteo.com/data/{expectedName}/static/meta.json";
+            Assert.AreEqual(expectedUrl, url);
+        }
+
+
+        [DataTestMethod]
+        [DataRow(WeatherModelOptionsParameter.ecmwf_ifs025, "ecmwf_ifs025")]
+        [DataRow(WeatherModelOptionsParameter.ecmwf_aifs025, "ecmwf_aifs025")]
+        [DataRow(WeatherModelOptionsParameter.icon_global, "dwd_icon")]
+        [DataRow(WeatherModelOptionsParameter.icon_eu, "dwd_icon_eu")]
+        [DataRow(WeatherModelOptionsParameter.icon_d2, "dwd_icon_d2")]
+        [DataRow(WeatherModelOptionsParameter.meteofrance_arpege_world, "meteofrance_arpege_world025")]
+        [DataRow(WeatherModelOptionsParameter.meteofrance_arpege_europe, "meteofrance_arpege_europe")]
+        [DataRow(WeatherModelOptionsParameter.meteofrance_arome_france, "meteofrance_arome_france0025")]
+        [DataRow(WeatherModelOptionsParameter.ukmo_uk_deterministic_2km, "ukmo_uk_deterministic_2km")]
+        [DataRow(WeatherModelOptionsParameter.ukmo_global_deterministic_10km, "ukmo_global_deterministic_10km")]
+        [DataRow(WeatherModelOptionsParameter.gfs_global, "ncep_gfs013")]
+        [DataRow(WeatherModelOptionsParameter.gfs_graphcast025, "ncep_gfs_graphcast025")]
+        [DataRow(WeatherModelOptionsParameter.gfs_hrrr, "ncep_hrrr_conus")]
+        [DataRow(WeatherModelOptionsParameter.gem_global, "cmc_gem_gdps")]
+        [DataRow(WeatherModelOptionsParameter.gem_hrdps_continental, "cmc_gem_hrdps")]
+        [DataRow(WeatherModelOptionsParameter.gem_regional, "cmc_gem_rdps")]
+        [DataRow(WeatherModelOptionsParameter.jma_gsm, "jma_gsm")]
+        public void GetWeatherForecastMetadataUrl_WithApiKey_Test(WeatherModelOptionsParameter weatherModel, string expectedName)
+        {
+            var factory = new UrlFactory("testApiKey");
+            var url = factory.GetWeatherForecastMetadataUrl(weatherModel);
+
+            var expectedUrl = $"https://customer-api.open-meteo.com/data/{expectedName}/static/meta.json";
+            Assert.AreEqual(expectedUrl, url);
+        }
 
         private static WeatherForecastOptions GetWeatherForecastOptions() => new()
         {
