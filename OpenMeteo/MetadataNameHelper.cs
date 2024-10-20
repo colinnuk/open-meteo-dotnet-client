@@ -18,6 +18,7 @@ internal static class MetadataNameHelper
         WeatherModelOptionsParameter.gfs_global => "ncep_gfs013",
         WeatherModelOptionsParameter.gfs_graphcast025 => "ncep_gfs_graphcast025",
         WeatherModelOptionsParameter.gfs_hrrr => "ncep_hrrr_conus",
+        WeatherModelOptionsParameter.ncep_nbm_conus => "ncep_nbm_conus",
         WeatherModelOptionsParameter.gem_global => "cmc_gem_gdps",
         WeatherModelOptionsParameter.gem_hrdps_continental => "cmc_gem_hrdps",
         WeatherModelOptionsParameter.gem_regional => "cmc_gem_rdps",
