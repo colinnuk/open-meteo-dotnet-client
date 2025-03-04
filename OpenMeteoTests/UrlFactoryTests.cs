@@ -110,7 +110,7 @@ namespace OpenMeteoTests
 
         [DataTestMethod]
         [DataRow(WeatherModelOptionsParameter.ecmwf_ifs025, "ecmwf_ifs025")]
-        [DataRow(WeatherModelOptionsParameter.ecmwf_aifs025, "ecmwf_aifs025")]
+        [DataRow(WeatherModelOptionsParameter.ecmwf_aifs025_single, "ecmwf_aifs025_single")]
         [DataRow(WeatherModelOptionsParameter.icon_global, "dwd_icon")]
         [DataRow(WeatherModelOptionsParameter.icon_eu, "dwd_icon_eu")]
         [DataRow(WeatherModelOptionsParameter.icon_d2, "dwd_icon_d2")]
@@ -139,7 +139,7 @@ namespace OpenMeteoTests
 
         [DataTestMethod]
         [DataRow(WeatherModelOptionsParameter.ecmwf_ifs025, "ecmwf_ifs025")]
-        [DataRow(WeatherModelOptionsParameter.ecmwf_aifs025, "ecmwf_aifs025")]
+        [DataRow(WeatherModelOptionsParameter.ecmwf_aifs025_single, "ecmwf_aifs025_single")]
         [DataRow(WeatherModelOptionsParameter.icon_global, "dwd_icon")]
         [DataRow(WeatherModelOptionsParameter.icon_eu, "dwd_icon_eu")]
         [DataRow(WeatherModelOptionsParameter.icon_d2, "dwd_icon_d2")]
