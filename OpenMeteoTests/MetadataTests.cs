@@ -10,7 +10,7 @@ public class MetadataTests
 {
     [DataTestMethod]
     [DataRow(WeatherModelOptionsParameter.ecmwf_ifs025)]
-    [DataRow(WeatherModelOptionsParameter.ecmwf_aifs025)]
+    [DataRow(WeatherModelOptionsParameter.ecmwf_aifs025_single)]
     [DataRow(WeatherModelOptionsParameter.icon_global)]
     [DataRow(WeatherModelOptionsParameter.icon_eu)]
     [DataRow(WeatherModelOptionsParameter.icon_d2)]

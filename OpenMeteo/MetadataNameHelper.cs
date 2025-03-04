@@ -6,7 +6,7 @@ internal static class MetadataNameHelper
     public static string GetPrefixForWeatherModel(WeatherModelOptionsParameter weatherModel) => weatherModel switch
     {
         WeatherModelOptionsParameter.ecmwf_ifs025 => "ecmwf_ifs025",
-        WeatherModelOptionsParameter.ecmwf_aifs025 => "ecmwf_aifs025",
+        WeatherModelOptionsParameter.ecmwf_aifs025_single => "ecmwf_aifs025_single",
         WeatherModelOptionsParameter.icon_global => "dwd_icon",
         WeatherModelOptionsParameter.icon_eu => "dwd_icon_eu",
         WeatherModelOptionsParameter.icon_d2 => "dwd_icon_d2",
