@@ -19,12 +19,12 @@ Support for:
 ## 🔨 Installation/Build
 
 ### NuGet
-[NuGet Package](https://www.nuget.org/packages/OpenMeteo.dotnet/)
+[NuGet Package](https://www.nuget.org/packages/OpenMeteo.dotnet.client.sdk/)
 
 Use NuGet Package Manager GUI. Or use NuGet CLI:
 
 ```bash
-dotnet add package OpenMeteo.dotnet
+dotnet add package OpenMeteo.dotnet.client.sdk
 ```
 
 ## 💻 Usage
