@@ -1,5 +1,5 @@
 
-# 🌡️🌤️ Open-Meteo Dotnet Cleint SDK Library
+# 🌡️🌤️ Open-Meteo Dotnet Client SDK Library
 [![build and test](https://github.com/colinnuk/open-meteo-dotnet-client/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/colinnuk/open-meteo-dotnet-client/actions/workflows/build-and-test.yml)
 [![GitHub license](https://img.shields.io/github/license/colinnuk/open-meteo-dotnet-client)](https://github.com/colinnuk/open-meteo-dotnet-client/blob/master/LICENSE)
 [![Nuget](https://img.shields.io/nuget/v/openmeteo.dotnet.client.sdk)](https://www.nuget.org/packages/OpenMeteo.dotnet.client.sdk)
