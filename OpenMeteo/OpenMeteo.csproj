@@ -1,23 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <PackageId>$(AssemblyName).colinnuk.dotnet</PackageId>
-    <Title>Open Meteo Dotnet 8 Library</Title>
+    <PackageId>$(AssemblyName).dotnet.client.sdk</PackageId>
+    <Title>OpenMeteo Dotnet Client SDK Library</Title>
     <Version>0.0.3</Version>
-    <Authors>AlienDwarf</Authors>
+    <Authors>AlienDwarf, colinnuk</Authors>
     <Company />
-    <Product>$(AssemblyName) Dotnet Library</Product>
+    <Product>$(AssemblyName) Dotnet Client SDK Library</Product>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/AlienDwarf/open-meteo-dotnet</RepositoryUrl>
+    <RepositoryUrl>https://github.com/colinnuk/open-meteo-dotnet-client-sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>OpenMeteo, Weather, Forecast, Meteorology, Api, Geodata, Weathercode</PackageTags>
-    <Copyright>Copyright © 2022 AlienDwarf</Copyright>
+    <Copyright>Copyright © 2025 AlienDwarf, colinnuk</Copyright>
     <AssemblyVersion>0.0.1</AssemblyVersion>
     <FileVersion>0.0.1</FileVersion>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Description>A DotNet 8 library for the Open-Meteo.com API.</Description>
+    <Description>A DotNet 8 Client SDK library for the Open-Meteo.com API.</Description>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <SignAssembly>False</SignAssembly>
