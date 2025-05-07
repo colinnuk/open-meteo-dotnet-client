@@ -13,6 +13,8 @@ Support for:
 - Almost all the OpenMeteo weather models (as of May 2025)
 - Using OpenMeteo with an API key
 - dotnet 8 (and above)
+- Specific client lobrary Exceptions can be thrown
+- Possible to register an ILogger in the Client SDK
 
 ## 🔨 Installation/Build
 
