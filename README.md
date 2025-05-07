@@ -2,7 +2,7 @@
 # 🌡️🌤️ Open-Meteo Dotnet Cleint SDK Library
 [![build and test](https://github.com/colinnuk/open-meteo-dotnet-client/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/colinnuk/open-meteo-dotnet-client/actions/workflows/build-and-test.yml)
 [![GitHub license](https://img.shields.io/github/license/colinnuk/open-meteo-dotnet-client)](https://github.com/colinnuk/open-meteo-dotnet-client/blob/master/LICENSE)
-[![Nuget](https://img.shields.io/nuget/v/openmeteo.dotnet)](https://www.nuget.org/packages/OpenMeteo.dotnet)
+[![Nuget](https://img.shields.io/nuget/v/openmeteo.dotnet.client.sdk)](https://www.nuget.org/packages/OpenMeteo.dotnet.client.sdk)
 
 A  dotnet 8 library for the [Open-Meteo](https://open-meteo.com) API.
 Forked from [https://github.com/AlienDwarf/open-meteo-dotnet](https://github.com/AlienDwarf/open-meteo-dotnet)
@@ -54,6 +54,13 @@ static async Task RunAsync()
     // Output: "Weather in Tokyo: 28.1°C
 }
 ```
+
+To use an OpenMeteo API key, you can use the constructor with the API key as a parameter:
+```cs
+var client = OpenMeteoClient("YourSecretApiKeyHere");
+```
+
+The best place to look for more usage examples is the [tests](https://github.com/colinnuk/open-meteo-dotnet-client-sdk/tree/master/OpenMeteoTests).
 
 ## License
 
