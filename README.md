@@ -55,7 +55,7 @@ static async Task RunAsync()
 
 ## License
 
-This project is open-source under the [MIT](https://github.com/colinnuk/open-meteo-dotnet-client/blob/master/LICENSE.txt) license.
+This project is open-source under the [MIT](https://github.com/colinnuk/open-meteo-dotnet-client/blob/master/LICENSE) license.
 
 ## Appendix
 
