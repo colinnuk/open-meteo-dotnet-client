@@ -251,7 +251,7 @@ namespace OpenMeteo
             try
             {
                 var url = _urlFactory.GetWeatherForecastMetadataUrl(weatherModel);
-                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetWeatherForecastMetadata(). URL: {_urlFactory.SanitiseUrl(url)}");
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.QueryWeatherForecastMetadata(). URL: {_urlFactory.SanitiseUrl(url)}");
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
@@ -260,7 +260,7 @@ namespace OpenMeteo
             }
             catch (HttpRequestException e)
             {
-                _logger?.Warning($"{nameof(OpenMeteoClient)}.GetAirQualityAsync(). Message: {e.Message} StackTrace: {e.StackTrace}");
+                _logger?.Warning($"{nameof(OpenMeteoClient)}.QueryWeatherForecastMetadata(). Message: {e.Message} StackTrace: {e.StackTrace}");
                 throw;
             }
         }
@@ -299,7 +299,7 @@ namespace OpenMeteo
             try
             {
                 var url = _urlFactory.GetUrlWithOptions(options);
-                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetElevationAsync(). URL: {_urlFactory.SanitiseUrl(url)}");
+                _logger?.Debug($"{nameof(OpenMeteoClient)}.GetWeatherForecastAsync(). URL: {_urlFactory.SanitiseUrl(url)}");
                 HttpResponseMessage response = await httpController.Client.GetAsync(url);
                 if(response.IsSuccessStatusCode)
                 {
