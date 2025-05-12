@@ -125,9 +125,7 @@ namespace OpenMeteo
         meteofrance_arome_france,
         meteofrance_arome_france_hd,
         bom_access_global,
-        arpae_cosmo_2i, 
-        arpae_cosmo_2i_ruc, 
-        arpae_cosmo_5m,
+        italia_meteo_arpae_icon_2i,
         ukmo_global_deterministic_10km,
         ukmo_uk_deterministic_2km,
     }

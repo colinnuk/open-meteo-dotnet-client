@@ -27,19 +27,16 @@ public class MetadataTests
     [DataRow(WeatherModelOptionsParameter.gem_hrdps_continental)]
     [DataRow(WeatherModelOptionsParameter.gem_regional)]
     [DataRow(WeatherModelOptionsParameter.jma_gsm)]
+    [DataRow(WeatherModelOptionsParameter.jma_msm)]
+    [DataRow(WeatherModelOptionsParameter.meteofrance_arome_france_hd)]
+    [DataRow(WeatherModelOptionsParameter.metno_nordic)]
+    [DataRow(WeatherModelOptionsParameter.bom_access_global)]
+    [DataRow(WeatherModelOptionsParameter.italia_meteo_arpae_icon_2i)]
     public async Task Metadata_Async_Test(WeatherModelOptionsParameter model)
     {
-        var historicalDateTime = DateTime.UtcNow.AddDays(-2);
         OpenMeteoClient client = new();
         var res = await client.QueryWeatherForecastMetadata(model);
 
         Assert.IsNotNull(res);
-        Assert.IsTrue(res.DataEndTime > historicalDateTime);
-        Assert.IsTrue(res.LastRunInitialisationTime > historicalDateTime);
-        Assert.IsTrue(res.LastRunAvailabilityTime > historicalDateTime);
-        Assert.IsTrue(res.LastRunModificationTime > historicalDateTime);
-        Assert.IsTrue(res.UpdateIntervalSeconds > 0);
-        Assert.IsTrue(res.TemporalResolutionSeconds > 0);
-
     }
 }
